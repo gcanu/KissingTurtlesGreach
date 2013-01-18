@@ -55,7 +55,6 @@ kissingturtles.view.gameview = function (model, elements) {
         }
     });
 
-    // user interface actions
     that.elements.list.live('pageinit', function (e) {
         that.listButtonClicked.notify();
     });
