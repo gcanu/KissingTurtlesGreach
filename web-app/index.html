@@ -35,7 +35,46 @@
     <script src="js/jquery/jquery.mobile-1.2.0.min.js"></script>
     <script src="js/jquery/mobiscroll-2.3.1.custom.min.js"></script>
 </head>
+<style>
+    #canvas {
+        display: block;
+        margin: 0 auto;
+    }
+
+    .center-wrapper {
+        text-align: center;
+    }
+
+    .center-wrapper * {
+        margin: 0 auto;
+    }
+
+</style>
 <body>
+
+<section data-role="page" id="start-game">
+    <div data-role="header" data-position="fixed">
+        <h1>Kissing Turtles</h1>
+    </div>
+
+    <div class="center-wrapper" data-role="content" id="start-presentation">
+        <div>
+            <img width="20%" src="images/game/turtle.png"/>
+            <img width="20%" src="images/game/pig.png"/>
+        </div>
+        <div data-theme="a" class="center-wrapper" data-content-theme="a">
+            <textarea readonly>Franklin and Emily have a rendez-vous. Help them to meet at the love tree. Use up, down, left, right buttons or tell them: "move up by 2"</textarea></div>
+        <div>
+            <ul data-role="listview" data-inset="true">
+                <li><a href="#section-list-games" data-role="button" data-inline="true">Play</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <div data-role="footer" data-position="fixed">
+        <h4>Greach 2013</h4>
+    </div>
+</section>
 <section data-role="page" id="section-list-game">
     <div data-role="header" data-position="fixed">
         <a href="index.html" data-transition="slide" data-icon="arrow-l">Back</a>
