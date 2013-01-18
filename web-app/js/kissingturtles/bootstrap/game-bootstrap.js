@@ -9,6 +9,10 @@ kissingturtles.loadgame = (function () {
             'add': $('#add-game'),
             'show': $('a[id^="game-list-"]'),
             'remove': $('#delete-game')
+        },
+        options: {
+            offline: false,
+            synchronization: true
         }
     });
 }());
