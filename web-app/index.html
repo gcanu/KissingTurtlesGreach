@@ -34,7 +34,36 @@
     <script src="js/kissingturtles/manager-bootstrap.js"></script>
     <script src="js/jquery/jquery.mobile-1.2.0.min.js"></script>
     <script src="js/jquery/mobiscroll-2.3.1.custom.min.js"></script>
+
+    <script src="js/ktDraw.js"></script>
 </head>
+<script>
+    window.onload = function () {
+       window.ktDraw(document.getElementById('canvas'), {
+         grid: 15,
+         gridLineWidth: 2,
+         stepDuration: 1000,
+         images: {
+           franklin: 'turtle.png',
+           emily: 'pig.png',
+           tree: 'flower1.png'
+         }
+       }, {
+           franklin: { x: 1, y: 0, direction: '+x' }
+       })({
+           franklin: { x: 10, y: 0, direction: '+x' }
+       })({
+         emily: { x: 2, y: 1, direction: '+x' },
+         franklin: { x: 10, y: 10, direction: '+x' }
+       })({
+         emily: { x: 12, y: 1, direction: '+y' },
+         franklin: { x: 11, y: 10, direction: '+x' }
+       })({
+         emily: { x: 12, y: 15, direction: '+y' },
+         franklin: { x: 11, y: 11, direction: '+x' }
+       });
+    };
+</script>
 <style>
     #canvas {
         display: block;
@@ -66,7 +95,7 @@
             <textarea readonly>Franklin and Emily have a rendez-vous. Help them to meet at the love tree. Use up, down, left, right buttons or tell them: "move up by 2"</textarea></div>
         <div>
             <ul data-role="listview" data-inset="true">
-                <li><a id="play"  href="" data-role="button" data-inline="true">Play</a></li>
+                <li><a id="play" data-role="button" data-inline="true">Play</a></li>
             </ul>
         </div>
     </div>
@@ -94,33 +123,28 @@
         </div>
     </div>
 </section>
+
 <section data-role="page" id="section-show-game">
     <div data-role="header" id="show-game" data-position="fixed">
-        <a href="#section-list-game" data-transition="slide" data-icon="arrow-l">Cancel</a>
+        <a href="#start-game" data-transition="slide" data-icon="arrow-l">Cancel</a>
         <h1>Game</h1>
     </div>
-    <form id="form-update-game" name="form-update-game">
-        <ul data-role="listview" data-inset="true">
-            <li data-role="fieldcontain">
-                <label for="input-game-name">Name</label>
-                <input type="text" class="validate[required]" name="name" id="input-game-name" value=""/>
-                
-            </li>
-        </ul>
-        <input type="hidden" name="id" id="input-game-id"/>
-        <input type="hidden" name="version" id="input-game-version"/>
-        <input type="hidden" name="class" id="input-game-class"/>
-    </form>
+    <canvas id="canvas" width="500" height="500" style='width:500px;height:500px'></canvas>
+    <ul data-role="listview" data-inset="true">
+        <li id="dsl-text" data-role="fieldcontain">
+            <textarea class="validate[required]" name="name" id="input-move-name"></textarea>
+            <button  data-transition="slide" data-icon="save" id="submit-game">Execute</button>
+        </li>
+    </ul>
+
+    <input type="hidden" name="id" id="input-game-id"/>
+    <input type="hidden" name="user-id" id="input-user1-move"/>
+    <input type="hidden" name="version" id="input-game-version"/>
+    <input type="hidden" name="class" id="input-game-class"/>
+
     <div data-role="footer" data-position="fixed">
         <div data-role="navbar">
-            <ul>
-                <li>
-                    <a data-transition="slide" data-role="button" data-icon="delete" id="delete-game">Delete</a>
-                </li>
-                <li>
-                    <a data-transition="slide" data-role="button" data-icon="save" id="submit-game">Save</a>
-                </li>
-            </ul>
+
         </div>
     </div>
 </section>

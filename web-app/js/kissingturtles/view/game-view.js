@@ -55,6 +55,13 @@ kissingturtles.view.gameview = function (model, elements) {
         }
     });
 
+    //----------------------------------------------------------------------------------------
+    //   Click on Play brings you here
+    //----------------------------------------------------------------------------------------
+    $('#play').live('click tap', function (e) {
+        $.mobile.changePage($("#section-list-game"));
+    });
+
     that.elements.list.live('pageinit', function (e) {
         that.listButtonClicked.notify();
     });
