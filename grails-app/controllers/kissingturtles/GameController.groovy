@@ -119,39 +119,40 @@ class GameController {
       }
       render GameInstance as JSON
     }
-
     def update() {
-      def jsonObject = JSON.parse(params.game)
-        
-        Game gameReceived = new Game(jsonObject)
-        
-        def gameInstance = Game.get(jsonObject.id)
+        JSONObject jsonObject = JSON.parse(params.game)
+        def gameInstance = Game.get(jsonObject.gameId)
+
+        // generate position for Emily (anywhere except on the walls)
+        def walls = wallGeneratorService.getWalls(gameInstance.mazeTTT)
+        Position emilyPosition = new Position().random(15, walls)
+        gameInstance.emilyX = emilyPosition.x
+        gameInstance.emilyY = emilyPosition.y
+        gameInstance.emilyRot = emilyPosition.rotation
+        gameInstance.emilyDir = emilyPosition.direction
+
+        gameInstance.mazeDefinition = gameService.updateFormatting(gameInstance, emilyPosition)
+
         if (!gameInstance) {
-          flash.message = message(code: 'default.not.found.message', args: [message(code: 'game.label', default: 'Game'), params.id])
-          render flash as JSON
+            flash.message = message(code: 'default.not.found.message', args: [message(code: 'game.label', default: 'Game'), params.id])
+            render flash as JSON
         }
 
-        if (jsonObject.version) {
-          def version = jsonObject.version.toLong()
-          if (gameInstance.version > version) {
-            gameInstance.errors.rejectValue("version", "default.optimistic.locking.failure",
-                                                             [message(code: 'game.label', default: 'Game')] as Object[],
-                                                             "Another user has updated this Game while you were editing")
-              ValidationErrors validationErrors = gameInstance.errors
-              render validationErrors as JSON
-              return
-          }
+        // only two users game
+        if (gameInstance.user2) {
+            flash.message = message(code: 'default.game.already.started', args: [message(code: 'game.label', default: 'Game'), params.id])
+            render flash as JSON
         }
+        gameInstance.user2 = jsonObject.get("user2")
 
-        gameInstance.properties = gameReceived.properties
-
+        // save game
         if (!gameInstance.save(flush: true)) {
-          ValidationErrors validationErrors = gameInstance.errors
-          render validationErrors as JSON
+            ValidationErrors validationErrors = gameInstance.errors
+            render validationErrors as JSON
         }
 
-        event topic:"update-game", data: gameInstance
-
+        // notify that Emily enters the game
+        event topic: "update-game", data: gameInstance
         render gameInstance as JSON
     }
 
