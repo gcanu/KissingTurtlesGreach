@@ -5,6 +5,8 @@ kissingturtles.view.gameview = function (model, elements) {
 
     var that = grails.mobile.mvc.view(model, elements);
 
+    that.currentMaze = null;
+
     // Register events
     that.model.listedItems.attach(function (data) {
         $('#list-game').empty();
@@ -29,17 +31,19 @@ kissingturtles.view.gameview = function (model, elements) {
         } else {
             var confAsString = data.item.mazeDefinition;
             var conf = JSON.parse(confAsString);
-
-            that.currentMaze = conf;
-            that.draw = ktDraw(document.getElementById('canvas'), conf, that.currentMaze.steps[0]);
-            that.player = "franklin";
-            that.gameId = data.item.id;
-
+            if (!data.item.NOTIFIED) {
+                that.currentMaze = conf;
+                that.draw = ktDraw(document.getElementById('canvas'), conf, that.currentMaze.steps[0]);
+                that.player = "franklin";
+                that.gameId = data.item.id;
+            }
             renderElement(data.item);
             showElement(data.item);
 
             $("#list-game").listview('refresh');
-            $.mobile.changePage($("#section-show-game"));
+            if (!data.item.NOTIFIED) {
+                $.mobile.changePage($("#section-show-game"));
+            }
         }
     });
 
@@ -47,21 +51,15 @@ kissingturtles.view.gameview = function (model, elements) {
     //    Callback to display the maze after execute method
     //----------------------------------------------------------------------------------------
     that.model.executed.attach(function (data, event) {
-        // only for my game
-        if (that.gameId == data.item.configuration.id) {
-            // refresh me if it's not myself pls
-            if (!data.item.NOTIFIED || that.player != data.item.configuration.player) {
-                var myGameObject = data.item;
-                $.each(myGameObject.configuration.steps, function(key, value) {
-                    that.draw(value, function () {
-                        var win = myGameObject.configuration.winningAnimation;
-                        if (win) {
-                            that.draw.win(win.x, win.y);
-                        }
-                    });
-                });
-            }
-        }
+        var myGameObject = data.item;
+        $.each(myGameObject.configuration.steps, function (key, value) {
+            that.draw(value, function () {
+                var win = myGameObject.configuration.winningAnimation;
+                if (win) {
+                    that.draw.win(win.x, win.y);
+                }
+            });
+        });
     });
 
     that.model.updatedItem.attach(function (data, event) {
@@ -163,7 +161,7 @@ kissingturtles.view.gameview = function (model, elements) {
         }
         $('#delete-game').show();
         $('#delete-game').parent().show();
-        $.mobile.changePage($('#section-show-game'));
+        //$.mobile.changePage($('#section-show-game'));
     };
 
     var resetForm = function (form) {
