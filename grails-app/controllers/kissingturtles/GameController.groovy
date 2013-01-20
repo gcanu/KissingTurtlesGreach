@@ -69,7 +69,7 @@ class GameController {
         }
 
         // notify when turtle moves
-        event topic: "executegame", data: conf
+        event topic: "execute-game", data: conf
         println conf
         render conf
     }

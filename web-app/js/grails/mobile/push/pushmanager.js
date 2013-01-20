@@ -23,9 +23,10 @@ grails.mobile.push.pushmanager = function (grailsEvents, domainName, store, mode
     var store = store;
     var domainName = domainName;
     var model = model;
+    that.grailsEvents = grailsEvents;
 
     if (options && options.eventPush) {
-        grailsEvents.on('save-' + domainName , function (data) {
+        that.grailsEvents.on('save-' + domainName , function (data) {
             if (!model.getItems()[data.id]) {
                 data.NOTIFIED = true;
                 if (options.offline) {
@@ -35,7 +36,7 @@ grails.mobile.push.pushmanager = function (grailsEvents, domainName, store, mode
             }
         });
 
-        grailsEvents.on('update-' + domainName , function (data) {
+        that.grailsEvents.on('update-' + domainName , function (data) {
             var retrievedData = model.getItems()[data.id];
             if (retrievedData && retrievedData.version < data.version) {
                 data.NOTIFIED = true;
@@ -46,7 +47,7 @@ grails.mobile.push.pushmanager = function (grailsEvents, domainName, store, mode
             }
         });
 
-        grailsEvents.on('delete-' + domainName , function (data) {
+        that.grailsEvents.on('delete-' + domainName , function (data) {
             if (!model.getItems()[data.id]) {
                 data.NOTIFIED = true;
                 if (options.offline) {

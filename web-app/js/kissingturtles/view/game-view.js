@@ -51,15 +51,21 @@ kissingturtles.view.gameview = function (model, elements) {
     //    Callback to display the maze after execute method
     //----------------------------------------------------------------------------------------
     that.model.executed.attach(function (data, event) {
-        var myGameObject = data.item;
-        $.each(myGameObject.configuration.steps, function (key, value) {
-            that.draw(value, function () {
-                var win = myGameObject.configuration.winningAnimation;
-                if (win) {
-                    that.draw.win(win.x, win.y);
-                }
-            });
-        });
+        // only for my game
+        if (that.gameId == data.item.configuration.id) {
+            // refresh me if it's not myself pls
+            if (!data.item.NOTIFIED || that.player != data.item.configuration.player) {
+                var myGameObject = data.item;
+                $.each(myGameObject.configuration.steps, function(key, value) {
+                    that.draw(value, function () {
+                        var win = myGameObject.configuration.winningAnimation;
+                        if (win) {
+                            that.draw.win(win.x, win.y);
+                        }
+                    });
+                });
+            }
+        }
     });
 
     //----------------------------------------------------------------------------------------
@@ -164,7 +170,6 @@ kissingturtles.view.gameview = function (model, elements) {
             };
             that.updateButtonClicked.notify(newElement, event);
         }
-
     });
 
     var createElement = function () {
