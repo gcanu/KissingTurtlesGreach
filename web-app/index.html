@@ -105,6 +105,28 @@
     </div>
 </section>
 
+<section data-role="page" id="section-show-user">
+    <div data-role="header" id="show-user" data-position="fixed">
+        <a href="#start-game" data-transition="slide" data-icon="arrow-l">Cancel</a>
+        <h1>Who are you?</h1>
+    </div>
+    <ul data-role="listview" data-inset="true">
+        <li data-role="fieldcontain">
+            <label for="input-user-name">What's your name ?</label>
+            <input type="text" class="validate[required]" name="name" id="input-user-name" value=""/>
+        </li>
+    </ul>
+
+    <div data-role="footer" data-position="fixed">
+        <div data-role="navbar">
+            <ul>
+                <li><a href="" data-role="button" data-transition="slide" data-icon="save"
+                       id="submit-user">Save</a></li>
+            </ul>
+        </div>
+    </div>
+</section>
+
 <section data-role="page" id="section-list-game">
     <div data-role="header" data-position="fixed">
         <a href="index.html" data-transition="slide" data-icon="arrow-l">Back</a>

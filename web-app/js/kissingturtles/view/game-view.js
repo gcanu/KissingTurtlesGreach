@@ -58,7 +58,22 @@ kissingturtles.view.gameview = function (model, elements) {
     //----------------------------------------------------------------------------------------
     //   Click on Play brings you here
     //----------------------------------------------------------------------------------------
-    $('#play').live('click tap', function (e) {
+    $('#play').live('click tap', function (event) {
+        var id = localStorage.getItem("KissingTurtles.UserId");
+        if (id) {
+            $.mobile.changePage($("#section-list-game"));
+            that.listButtonClicked.notify();
+        } else {
+            $.mobile.changePage($("#section-show-user"));
+        }
+    });
+
+    //----------------------------------------------------------------------------------------
+    //   Click on Save on user page. Your name is asked only once.
+    //----------------------------------------------------------------------------------------
+    $("#submit-user").live("click tap", function(event) {
+        var name = $('#input-user-name').val();
+        localStorage.setItem("KissingTurtles.UserId", name);
         $.mobile.changePage($("#section-list-game"));
     });
 
