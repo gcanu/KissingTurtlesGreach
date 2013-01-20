@@ -43,6 +43,27 @@ kissingturtles.view.gameview = function (model, elements) {
         }
     });
 
+    //----------------------------------------------------------------------------------------
+    //    Callback to display the maze after execute method
+    //----------------------------------------------------------------------------------------
+    that.model.executed.attach(function (data, event) {
+        // only for my game
+        if (that.gameId == data.item.configuration.id) {
+            // refresh me if it's not myself pls
+            if (!data.item.NOTIFIED || that.player != data.item.configuration.player) {
+                var myGameObject = data.item;
+                $.each(myGameObject.configuration.steps, function(key, value) {
+                    that.draw(value, function () {
+                        var win = myGameObject.configuration.winningAnimation;
+                        if (win) {
+                            that.draw.win(win.x, win.y);
+                        }
+                    });
+                });
+            }
+        }
+    });
+
     that.model.updatedItem.attach(function (data, event) {
         if (data.item.errors) {
             $.each(data.item.errors, function(index, error) {
@@ -104,6 +125,15 @@ kissingturtles.view.gameview = function (model, elements) {
             game: JSON.stringify(obj)
         };
         that.createButtonClicked.notify(newElement, event);
+    });
+
+    //----------------------------------------------------------------------------------------
+    //   Click on Execute my DSL script brings you here
+    //----------------------------------------------------------------------------------------
+    $("#submit-game").live("click tap", function(event) {
+        var dslInput = $('#input-move-name').val();
+        var gameId = that.gameId;
+        that.executeButtonClicked.notify({title: "KissingTurtles", content: dslInput, gameId: gameId, user: localStorage.getItem("KissingTurtles.UserId")});
     });
 
     that.elements.show.live('click tap', function (event) {

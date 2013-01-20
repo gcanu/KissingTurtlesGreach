@@ -8,6 +8,8 @@ import org.codehaus.groovy.grails.web.json.JSONObject;
 import org.springframework.dao.DataIntegrityViolationException
 
 import dsl.Position
+import dsl.Turtle
+import dsl.DslScript
 
 class GameController {
 
@@ -23,6 +25,53 @@ class GameController {
     def list() {
       params.max = Math.min(params.max ? params.int('max') : 10, 100)
       render Game.list(params) as JSON
+    }
+
+    def run() {
+        println "in the inputs" + params
+
+        def game = Game.findById(params.gameId)
+
+        Position franklinPosition = new Position(game.franklinX, game.franklinY, game.franklinRot, game.franklinDir)
+        Position emilyPosition = new Position(game.emilyX, game.emilyY, game.emilyRot, game.emilyDir)
+
+        def scriptInstance = new DslScript(params)
+        def script = scriptInstance.content
+        def turtle
+
+        println "my game is ${game.id} with maze ${game.mazeTTT}"
+
+        if (game.user1 == params.user) {
+            turtle = new Turtle("franklin", "image", franklinPosition, game.mazeTTT)
+        } else if ((game.user2 == params.user)) {
+            turtle = new Turtle("emily", "image", emilyPosition, game.mazeTTT)
+        }
+
+        def binding = new Binding([
+                turtle: turtle,
+                left: dsl.Direction.left,
+                right: dsl.Direction.right,
+                down: dsl.Direction.down,
+                up: dsl.Direction.up,
+                move: turtle.&move,
+                by: turtle.&by
+        ])
+        def shell = new GroovyShell(binding)
+        shell.evaluate(script)
+        def result = binding.getVariable('turtle').result
+
+        def conf = gameService.runFormatting(game, turtle, result)
+
+        // save current position
+        if (!game.save(flush: true)) {
+            ValidationErrors validationErrors = game.errors
+            render validationErrors as JSON
+        }
+
+        // notify when turtle moves
+        event topic: "executegame", data: conf
+        println conf
+        render conf
     }
 
     def save() {

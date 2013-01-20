@@ -58,5 +58,9 @@ grails.mobile.feed.feed = function (baseUrl, store) {
         currentFeed.deleteItem(data, deleted);
     };
 
+    that.execute = function (data, executed) {
+        currentFeed.execute(data, executed);
+    };
+
     return that;
 };

@@ -52,6 +52,7 @@ grails.mobile.push.pushmanager = function (grailsEvents, domainName, store, mode
                 model.deleteItem(data);
             }
         });
+
     }
     return that;
 };

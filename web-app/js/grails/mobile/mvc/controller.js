@@ -29,6 +29,17 @@ grails.mobile.mvc.controller = function (feed, model, view) {
     that.onlineEvent = grails.mobile.event();
 
     // Register events
+    view.executeButtonClicked.attach(function (item, context) {
+        execute(item, context);
+    });
+
+    var execute = function (data, context) {
+        var executed = function (data) {
+            return that.model.execute(data, context);
+        };
+        feed.execute(data, executed);
+    };
+
     view.offlineEvent.attach(function (item) {
         feed.setOffline();
     });
