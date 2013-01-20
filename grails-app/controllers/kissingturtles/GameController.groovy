@@ -3,14 +3,18 @@ package kissingturtles
 
 import grails.converters.JSON
 import grails.validation.ValidationErrors
-import groovy.json.JsonBuilder;
 
 import org.codehaus.groovy.grails.web.json.JSONObject;
 import org.springframework.dao.DataIntegrityViolationException
 
+import dsl.Position
+
 class GameController {
 
     static allowedMethods = [save: "POST", update: "POST", delete: "POST"]
+
+    def gameService
+    def wallGeneratorService
 
     def index() {
         redirect(action: "list", params: params)
@@ -22,19 +26,40 @@ class GameController {
     }
 
     def save() {
-      def jsonObject = JSON.parse(params.game)
-      
-      Game gameInstance = new Game(jsonObject)
+        def size = 15
+        JSONObject jsonObject = JSON.parse(params.game)
 
-      
-      if (!gameInstance.save(flush: true)) {
-        ValidationErrors validationErrors = gameInstance.errors
-        render validationErrors as JSON
-      }
+        // generate walls
+        def whichMaze = wallGeneratorService.randomWallConfiguration()
+        def walls = wallGeneratorService.getWalls(whichMaze)
 
-      event topic:"save-game", data: gameInstance
+        // generate position for Franklin and the meeting point
+        Position franklinPosition = new Position().random(size, walls)
+        Position treePosition = new Position().random(size, walls)
 
-      render gameInstance as JSON
+        // format into json like
+        def mazeDefinition = gameService.createFormatting(walls, franklinPosition, treePosition)
+
+        // create new Game
+        Game gameInstance = new Game()
+        gameInstance.user1 = jsonObject.entrySet().iterator().next().value
+        gameInstance.mazeDefinition = mazeDefinition
+        gameInstance.mazeTTT = whichMaze
+        gameInstance.franklinX = franklinPosition.x
+        gameInstance.franklinY = franklinPosition.y
+        gameInstance.franklinRot = franklinPosition.rotation
+        gameInstance.franklinDir = franklinPosition.direction
+        gameInstance.treeX = treePosition.x
+        gameInstance.treeY = treePosition.y
+        gameInstance.treeRot = treePosition.rotation
+        gameInstance.treeDir = treePosition.direction
+        if (!gameInstance.save(flush: true)) {
+            ValidationErrors validationErrors = gameInstance.errors
+            render validationErrors as JSON
+        }
+        // notify when first turtle create a new game
+        event topic:"save-game", data: gameInstance
+        render gameInstance as JSON
     }
     
     def show() {

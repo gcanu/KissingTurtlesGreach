@@ -15,19 +15,32 @@ kissingturtles.view.gameview = function (model, elements) {
         $('#list-game').listview('refresh');
     });
 
+    //----------------------------------------------------------------------------------------
+    //   Callback after first player create a new game. First player will play as Franklin.
+    //----------------------------------------------------------------------------------------
     that.model.createdItem.attach(function (data, event) {
         if (data.item.errors) {
-            $.each(data.item.errors, function(index, error) {
-                $('#input-game-' + error.field).validationEngine('showPrompt',error.message, 'fail');
+            $.each(data.item.errors, function (index, error) {
+                $('#input-game-' + error.field).validationEngine('showPrompt', error.message, 'fail');
             });
             event.stopPropagation();
         } else if (data.item.message) {
             showGeneralMessage(data, event);
         } else {
+            var confAsString = data.item.mazeDefinition;
+            var conf = JSON.parse(confAsString);
+
+            that.currentMaze = conf;
+            that.draw = ktDraw(document.getElementById('canvas'), conf, that.currentMaze.steps[0]);
+            that.player = "franklin";
+            that.gameId = data.item.id;
+
             renderElement(data.item);
-            $('#list-game').listview('refresh');
-            $.mobile.changePage($('#section-list-game'));
-		}
+            showElement(data.item);
+
+            $("#list-game").listview('refresh');
+            $.mobile.changePage($("#section-show-game"));
+        }
     });
 
     that.model.updatedItem.attach(function (data, event) {
@@ -58,7 +71,22 @@ kissingturtles.view.gameview = function (model, elements) {
     //----------------------------------------------------------------------------------------
     //   Click on Play brings you here
     //----------------------------------------------------------------------------------------
-    $('#play').live('click tap', function (e) {
+    $('#play').live('click tap', function (event) {
+        var id = localStorage.getItem("KissingTurtles.UserId");
+        if (id) {
+            $.mobile.changePage($("#section-list-game"));
+            that.listButtonClicked.notify();
+        } else {
+            $.mobile.changePage($("#section-show-user"));
+        }
+    });
+
+    //----------------------------------------------------------------------------------------
+    //   Click on Save on user page. Your name is asked only once.
+    //----------------------------------------------------------------------------------------
+    $("#submit-user").live("click tap", function(event) {
+        var name = $('#input-user-name').val();
+        localStorage.setItem("KissingTurtles.UserId", name);
         $.mobile.changePage($("#section-list-game"));
     });
 
@@ -66,32 +94,16 @@ kissingturtles.view.gameview = function (model, elements) {
         that.listButtonClicked.notify();
     });
 
-    that.elements.save.live('click tap', function (event) {
+    //----------------------------------------------------------------------------------------
+    //   Click on 'Create your own game' brings you here
+    //----------------------------------------------------------------------------------------
+    $("#add-game").live('click tap', function (event) {
         event.stopPropagation();
-        $('#form-update-game').validationEngine('hide');
-        if($('#form-update-game').validationEngine('validate')) {
-            var obj = grails.mobile.helper.toObject($('#form-update-game').find('input, select'));
-            var newElement = {
-                game: JSON.stringify(obj)
-            };
-            if (obj.id === '') {
-                that.createButtonClicked.notify(newElement, event);
-            } else {
-                that.updateButtonClicked.notify(newElement, event);
-            }
-        }
-    });
-
-    that.elements.remove.live('click tap', function (event) {
-        event.stopPropagation();
-        that.deleteButtonClicked.notify({ id: $('#input-game-id').val() }, event);
-    });
-
-    that.elements.add.live('click tap', function (event) {
-        event.stopPropagation();
-        $('#form-update-game').validationEngine('hide');
-        $('#form-update-game').validationEngine({promptPosition: 'bottomLeft'});
-        createElement();
+        var obj = {user1: localStorage.getItem("KissingTurtles.UserId")};
+        var newElement = {
+            game: JSON.stringify(obj)
+        };
+        that.createButtonClicked.notify(newElement, event);
     });
 
     that.elements.show.live('click tap', function (event) {
@@ -110,13 +122,15 @@ kissingturtles.view.gameview = function (model, elements) {
     var showElement = function (id) {
         resetForm('form-update-game');
         var element = that.model.items[id];
-        $.each(element, function (name, value) {
-            var input = $('#input-game-' + name);
-            input.val(value);
-            if (input.attr('data-type') == 'date') {
-                input.scroller('setDate', (value === '') ? '' : new Date(value), true);
-            }
-        });
+        if (element) {
+            $.each(element, function (name, value) {
+                var input = $('#input-game-' + name);
+                input.val(value);
+                if (input.attr('data-type') == 'date') {
+                    input.scroller('setDate', (value === '') ? '' : new Date(value), true);
+                }
+            });
+        }
         $('#delete-game').show();
         $('#delete-game').parent().show();
         $.mobile.changePage($('#section-show-game'));
@@ -165,16 +179,9 @@ kissingturtles.view.gameview = function (model, elements) {
     };
 
     var getText = function (data) {
-        var textDisplay = '';
-        $.each(data, function (name, value) {
-            if (name !== 'class' && name !== 'id' && name !== 'offlineAction' && name !== 'offlineStatus' && name !== 'status' && name !== 'version') {
-                if (typeof value !== 'object') {   // do not display relation in list view
-                    textDisplay += value + ' - ';
-                }
-            }
-        });
-        return textDisplay.substring(0, textDisplay.length - 2);
+        return data.user1 + " playing with " + data.user2;
     };
+
 
     var showGeneralMessage = function(data, event) {
         $.mobile.showPageLoadingMsg( $.mobile.pageLoadErrorMessageTheme, data.item.message, true );
