@@ -47,15 +47,10 @@ kissingturtles.view.gameview = function (model, elements) {
     //    Callback to display the maze after execute method
     //----------------------------------------------------------------------------------------
     that.model.executed.attach(function (data, event) {
-        var myGameObject = data.item;
-        $.each(myGameObject.configuration.steps, function (key, value) {
-            that.draw(value, function () {
-                var win = myGameObject.configuration.winningAnimation;
-                if (win) {
-                    that.draw.win(win.x, win.y);
-                }
-            });
-        });
+        // TO DO
+        // draw each animation
+        // callback method is provided as second parameter of ktDraw
+        // this callback is used to check if winningAnimation is present
     });
 
     that.model.updatedItem.attach(function (data, event) {
@@ -125,9 +120,12 @@ kissingturtles.view.gameview = function (model, elements) {
     //   Click on Execute my DSL script brings you here
     //----------------------------------------------------------------------------------------
     $("#submit-game").live("click tap", function(event) {
-        var dslInput = $('#input-move-name').val();
-        var gameId = that.gameId;
-        that.executeButtonClicked.notify({title: "KissingTurtles", content: dslInput, gameId: gameId, user: localStorage.getItem("KissingTurtles.UserId")});
+        // TO DO
+        // get dat from DSL textarea
+        // notify controller of an execute event with following json {content: }
+        //var dslInput = 
+        //var gameId = 
+        //that.executeButtonClicked.notify({title: "KissingTurtles", content: dslInput, gameId: gameId, user: localStorage.getItem("KissingTurtles.UserId")});
     });
 
     that.elements.show.live('click tap', function (event) {
