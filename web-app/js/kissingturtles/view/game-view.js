@@ -74,24 +74,13 @@ kissingturtles.view.gameview = function (model, elements) {
         } else if (data.item.message) {
             showGeneralMessage(data, event);
         } else {
-            // In case of Emily or Franklin we go here
-            var confAsString = data.item.mazeDefinition;
-            var conf = JSON.parse(confAsString);
-            that.currentMaze = conf;
+            //TO DO
+            // For Emily and only once (not on notification)
+            // draw canvas with intitialization state
+            // For Franklin draw Emility new position
             updateElement(data.item);
-
-            if (!data.item.NOTIFIED) {
-                // For Emily game, initialize canvas
-                that.draw = ktDraw(document.getElementById('canvas'), conf, that.currentMaze.steps[0]);
-                that.player = "emily";
-                that.gameId = data.item.id;
-                $.mobile.changePage($("#section-show-game"));
-            } else if (that.player == "franklin" && that.gameId == data.item.id) {
-                // For Franklin game
-                that.draw({emily: that.currentMaze.steps[0].emily});
-            } else {
-                $("#list-game").listview('refresh');
-            }
+            $('#list-game').listview('refresh');
+            $.mobile.changePage($('#section-list-game'));
         }
     });
 
@@ -155,16 +144,9 @@ kissingturtles.view.gameview = function (model, elements) {
     //   Click on an element of the list to join the game. Second player is Emily.
     //----------------------------------------------------------------------------------------
     that.elements.show.live('click tap', function (event) {
-        event.stopPropagation();
-        var gameId = $(event.currentTarget).attr('data-id');
-        if(gameId) {
-            var obj = {user2: localStorage.getItem("KissingTurtles.UserId"), gameId: gameId};
-            var newElement = {
-                game: JSON.stringify(obj)
-            };
-            that.updateButtonClicked.notify(newElement, event);
-        }
-
+        // TO DO
+        // Retrieve gameId and userId
+        // and notify controller of an update
     });
 
     var createElement = function () {
