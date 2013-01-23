@@ -27,19 +27,14 @@ kissingturtles.view.gameview = function (model, elements) {
         } else if (data.item.message) {
             showGeneralMessage(data, event);
         } else {
-            var confAsString = data.item.mazeDefinition;
-            var conf = JSON.parse(confAsString);
-
-            that.currentMaze = conf;
-            that.draw = ktDraw(document.getElementById('canvas'), conf, that.currentMaze.steps[0]);
-            that.player = "franklin";
-            that.gameId = data.item.id;
+        // TO DO
+        // init ktDraw with data from server (use debugger to see format)
 
             renderElement(data.item);
             showElement(data.item);
 
-            $("#list-game").listview('refresh');
-            $.mobile.changePage($("#section-show-game"));
+        // TO DO
+        // Go to section-show-game
         }
     });
 
@@ -98,12 +93,9 @@ kissingturtles.view.gameview = function (model, elements) {
     //   Click on 'Create your own game' brings you here
     //----------------------------------------------------------------------------------------
     $("#add-game").live('click tap', function (event) {
-        event.stopPropagation();
-        var obj = {user1: localStorage.getItem("KissingTurtles.UserId")};
-        var newElement = {
-            game: JSON.stringify(obj)
-        };
-        that.createButtonClicked.notify(newElement, event);
+        // TO DO
+        // get player name from local storage
+        // notify controller of create event;
     });
 
     that.elements.show.live('click tap', function (event) {
