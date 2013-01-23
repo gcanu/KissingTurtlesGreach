@@ -29,21 +29,23 @@ kissingturtles.view.gameview = function (model, elements) {
         } else if (data.item.message) {
             showGeneralMessage(data, event);
         } else {
+            // TO DO draw canvas only for Franklin
+            // go to section-show-game only Franklin
+            // use NOTIFIED attribute which is true when
+            // on notification (put a breakpoint here and debug)
             var confAsString = data.item.mazeDefinition;
             var conf = JSON.parse(confAsString);
-            if (!data.item.NOTIFIED) {
-                that.currentMaze = conf;
-                that.draw = ktDraw(document.getElementById('canvas'), conf, that.currentMaze.steps[0]);
-                that.player = "franklin";
-                that.gameId = data.item.id;
-            }
+
+            that.currentMaze = conf;
+            that.draw = ktDraw(document.getElementById('canvas'), conf, that.currentMaze.steps[0]);
+            that.player = "franklin";
+            that.gameId = data.item.id;
+
             renderElement(data.item);
             showElement(data.item);
 
             $("#list-game").listview('refresh');
-            if (!data.item.NOTIFIED) {
-                $.mobile.changePage($("#section-show-game"));
-            }
+            $.mobile.changePage($("#section-show-game"));
         }
     });
 
