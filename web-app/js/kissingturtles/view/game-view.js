@@ -51,10 +51,11 @@ kissingturtles.view.gameview = function (model, elements) {
     //    Callback to display the maze after execute method
     //----------------------------------------------------------------------------------------
     that.model.executed.attach(function (data, event) {
-        // only for my game
-        if (that.gameId == data.item.configuration.id) {
-            // refresh me if it's not myself pls
-            if (!data.item.NOTIFIED || that.player != data.item.configuration.player) {
+
+            // TO DO
+            // Notify only the 2 players for a given game
+            // refresh canvas if it's not myself pls
+            
                 var myGameObject = data.item;
                 $.each(myGameObject.configuration.steps, function(key, value) {
                     that.draw(value, function () {
@@ -64,8 +65,7 @@ kissingturtles.view.gameview = function (model, elements) {
                         }
                     });
                 });
-            }
-        }
+
     });
 
     //----------------------------------------------------------------------------------------
