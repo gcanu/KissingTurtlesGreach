@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Draw background</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+body {
+  background-color: #EAEAEA;
+}
+#canvas {
+  display: block;
+  width: 100%;
+  box-shadow: 1px 1px 8px #555;
+  max-width: 40em;
+  margin: 0 auto;
+}
+    </style>
+    <script type="application/javascript" src="ktDrawBackground.js"></script>
+    <script type="application/javascript">
+//<!--
+window.onload = function () {
+  window.ktDrawBackground(document.getElementById('canvas'), 15);
+};
+//-->
+    </script>
+  </head>
+  <body>
+    <canvas id="canvas" width="1000" height="1000"></canvas>
+  </body>
+</html>

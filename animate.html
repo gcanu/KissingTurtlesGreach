@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Animating</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+body {
+  background-color: #EAEAEA;
+}
+#canvas {
+  display: block;
+  width: 100%;
+  box-shadow: 1px 1px 8px #555;
+  max-width: 40em;
+  margin: 0 auto;
+}
+    </style>
+    <script type="application/javascript" src="ktDrawBackground.js"></script>
+    <script type="application/javascript" src="ktPreload.js"></script>
+    <script type="application/javascript" src="ktDrawFrame.js"></script>
+    <script type="application/javascript" src="ktAnimate.js"></script>
+    <script type="application/javascript">
+//<!--
+window.onload = function () {
+  if (!window.requestAnimationFrame) {
+    window.requestAnimationFrame = window.mozRequestAnimationFrame ||
+      window.webkitRequestAnimationFrame ||
+      window.msRequestAnimationFrame ||
+      function (cb) { setTimeout(function () { cb(Date.now()); }, 1000/60); };
+  }
+  window.ktPreload(['turtle1', 'turtle2', 'tree'], function (preloaded) {
+    var moveObject = window.ktAnimate(document.getElementById('canvas'), 15, preloaded);
+    moveObject('franklin', { role: 'turtle1', x: 12, y: 2, rotation: 0 }, function () {
+      moveObject('franklin', { role: 'turtle1', x: 13, y: 2, rotation: 0 }, function () {
+        moveObject('franklin', { role: 'turtle1', x: 13, y: 2, rotation: Math.PI / 2 }, function () {
+          moveObject('franklin', { role: 'turtle1', x: 13, y: 3, rotation: Math.PI / 2 });
+        });
+      });
+    });
+  });
+};
+//-->
+    </script>
+  </head>
+  <body>
+    <canvas id="canvas" width="1000" height="1000"></canvas>
+  </body>
+</html>
