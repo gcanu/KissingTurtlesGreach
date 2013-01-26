@@ -96,6 +96,7 @@ kissingturtles.view.gameview = function (model, elements) {
         // TO DO
         // get player name from local storage
         // notify controller of create event;
+        // like: that.createButtonClicked.notify({game: "{user1: \"foo\"}"}, event);
     });
 
     that.elements.show.live('click tap', function (event) {
