@@ -12,7 +12,7 @@ kissingturtles.loadgame = (function () {
         },
         options: {
             offline: false,
-            synchronization: true
+            eventPush: true
         }
     });
 }());
