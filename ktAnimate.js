@@ -33,9 +33,89 @@
  **/
 window.ktAnimate = (function() {
   return function(canvas, grid, preloaded) {
-    // TODO
+    window.ktDrawBackground(canvas, grid);
+    var objects = {
+      franklin: {
+        role: 'turtle1',
+        x: 12,
+        y: 2,
+        rotation: Math.PI
+      },
+      emily: {
+        role: 'turtle2',
+        x: 3,
+        y: 10,
+        rotation: Math.PI / 2
+      },
+      tree1: {
+        role: 'tree',
+        x: 0,
+        y: 0,
+        rotation: 0
+      },
+      tree2: {
+        role: 'tree',
+        x: grid - 1,
+        y: grid - 1,
+        rotation: 0
+      },
+      tree3: {
+        role: 'tree',
+        x: 10.5,
+        y: 5.5,
+        rotation: Math.PI / 7
+      }
+    };
+
+    window.ktDrawFrame(canvas, grid, preloaded, objects);
+
+    var animated = {};
+    var frames = {};
+    var startTime = Date.now();
+    var duration = 1000;
+
+    var fnAnimate = function animate() {
+        for(var name in animated) {
+          if(!frames[name]) { 
+            frames[name] = {
+              role: animated[name].role,
+              x: animated[name].from.x,
+              y: animated[name].from.y
+            };
+          }
+
+          var progress = (Date.now() - startTime) / duration;
+  
+          frames[name].x = fnAverage(animated[name].from.x, animated[name].to.x, progress);
+          frames[name].y = fnAverage(animated[name].from.y, animated[name].to.y, progress);
+          console.log(frames[name].x);
+
+          window.ktDrawFrame(canvas, grid, preloaded, frames);
+          
+          if(progress <= 1)
+            window.requestAnimationFrame(fnAnimate);
+          else if(animated[name].fn) 
+            animated[name].fn();
+        }
+    };
+
+    var fnAverage = function average(from, to, progress) {
+      return from + (to - from) * progress;
+    };
+
     function moveObject(name, object, callback) {
-      //TODO
+      var obj = objects[name];
+      var toX = object.x;
+      var toY = object.y;
+      
+      animated[name] = {
+        role: obj.role,
+        from: { x: obj.x, y: obj.y },
+        to: { x: object.x, y: object.y },
+        fn: callback
+      };
+
+      window.requestAnimationFrame(fnAnimate);
     }
     return moveObject;
   };

@@ -30,5 +30,20 @@
 window.ktDrawFrame = (function() {
   return function(canvas, grid, preloaded, objects) {
     //TODO
+
+    var ctx = canvas.getContext('2d');
+    ctx.save();
+
+    ctx.scale(canvas.width/grid, canvas.height/grid);
+    ctx.translate(0.5, 0.5);
+    
+    var obj;
+    
+    for(var name in objects) {
+      obj = objects[name];
+      ctx.drawImage(preloaded[obj.role], obj.x-0.5, obj.y-0.5, 1, 1);
+    }
+
+    ctx.restore();
   };
 })();
